@@ -35,6 +35,7 @@ func NewMaze(height, width int) *Maze {
 	return &maze
 }
 
+// Enum to represent location of the wall relative to a cell
 const (
 	UP    = iota
 	RIGHT = iota
@@ -42,14 +43,20 @@ const (
 	LEFT  = iota
 )
 
+// Number of horizontal walls.
 func (m *Maze) horz_wall_cnt() int {
 	return (m.Height + 1) * m.Width
 }
 
+// Total number of walls
 func (m *Maze) WallCnt() int {
 	return (m.Height+1)*m.Width + m.Height*(m.Width+1)
 }
 
+// Convert a cell coordinate to a wall number
+// Decided to use a 1-dim array to represent the walls
+// The first half are horizontal walls, and the second half
+// are vertical walls.
 func (m *Maze) cell_cord_to_wall_seq(i, j, direction int) int {
 	horz_walls := m.horz_wall_cnt()
 	switch direction {
@@ -125,6 +132,11 @@ func get_cell_on_other_size(i, j, dir int) (int, int) {
 	return -1, -1
 }
 
+// Create a maze with Iterative randomized Kruskal's algorithm
+//   - randomly shuffle all the walls
+//   - for each wall
+//     -- if the two cells divided by the wall are not connected
+//     -- remove the wall and connect the two sets
 func CreateMaze(height, width int) *Maze {
 	maze := NewMaze(height, width)
 	uf := mazelib.CreateUnionFind(maze.Height * maze.Width)
@@ -132,7 +144,7 @@ func CreateMaze(height, width int) *Maze {
 		// If the cells sharing this wall belongs to different
 		// set, remove the wall and join the two sets
 		i1, j1, dir := maze.WallSeqToCellCord(wall_seq)
-		// wall on the board is not shared by two cells
+		// wall on the boarder is not shared by two cells
 		if maze.is_boarder_wall(i1, j1, dir) {
 			continue
 		}

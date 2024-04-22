@@ -34,6 +34,8 @@ type Game struct {
 }
 
 func (g *Game) Update() error {
+	// The update happens 60 times per second
+	// We will remove 5 walls per second
 	g.tick_cnt = (g.tick_cnt + 1) % 60
 	if !g.Maze.Finished() && g.tick_cnt%(60/TPS) == 0 {
 		g.Maze.Next()
@@ -68,6 +70,7 @@ func get_wall_cord_from_cell(cell_w, cell_h, i, j, dir int) (start_x, start_y, e
 	return x1, y1, x2, y2
 }
 
+// Draw all the walls
 func (g *Game) Draw(screen *ebiten.Image) {
 	width := screen.Bounds().Dx() - Margin // leave some margin
 	height := screen.Bounds().Dy() - Margin
